@@ -31,23 +31,14 @@
 -------------------------------------------------------------------
 	 
 	 projects to add:
-		
-		Other:
-			- website building?
+
 		
 		Bachelor:
-			- sketching
-			- introduction to physical systems? (1 mei 2021)
-			- algorithms (processing)
 			- Sounds and Circuits (2021/2022?)
 			- Human Centered Design (HCD)
 			- Smart tech (circuits & electronics), (modelling & control), (hackathon)
 			- Design an research of user experience (3 tests)
-			- M6 statistical techniques
-			- Empirical Research Methods (statistics)
-			- data visualisation
 			- data driven applications (sql)
-			- Network systems / internet technology
 		
 		Master:
 			- Virtual Reality
@@ -59,14 +50,8 @@
 			- sources of innovation
 
 		Pre-master
-			- design ideation and visualisation (sketching)
-			- technical product definition
-			- project multidisciplinary product development (heinz)
 			- information management and visualisation (sketching & tpm2)
 			
-		
-	 Projects to flesh out:
-		- game design
 
 		
 -------------------------------------------------------------------*/
@@ -370,6 +355,33 @@ const PROJECTS = [
     body: [],
     images: [],
     tags: ["Manufacturing", "Design"],
+    links: [],
+    featured: true,
+  },
+  {
+    title: "Multidisciplinary project for Heinz",
+    year: "2026",
+    role: "Pre-Master IDE",
+    description:
+      "Work on a project for Heinz in a multidisciplinary team consisting of Mechanical Engineering students, Industrial Engineering & Management students and Industrial Design Engineering students.",
+    body: ["For this project for Heinz, we worked in a multidisciplinary team consisting of Mechanical Engineering students, Industrial Engineering & Management students and Industrial Design Engineering students.",
+	"The team acted as a design agency, planning, managing and carrying out the development cycle.",
+	"Heinz was very pleased with our results and awarded us for it, sadly I am not allowed to share much about it."],
+    images: [],
+    tags: ["Design", "Manufacturing", "UX"],
+    links: [],
+    featured: true,
+  },
+  {
+    title: "Soft Robotics",
+    year: "2026",
+    role: "Master's Course",
+    description:
+      "Soft robotics are a new approach in designing safe and adaptive interactions.",
+    body: ["Soft robotics are a new approach in designing safe and adaptive interactions.",
+	"For the final project, our group created a glove to help learn sign language using mostly soft materials, with the intention to make the user be able to wear it throughout the day without being disturbed from other work. The result was tested using rock, paper scissors and worked surprisingly well. A video of the project can be found above."],
+    images: ["assets/meg.mp4"],
+    tags: ["Design", "Programming"],
     links: [],
     featured: true,
   },
