@@ -342,7 +342,7 @@ const PROJECTS = [
     featured: true,
   },
 {
-    title: "Design, Production & Materials",
+    title: "Design, Production & Materials [Ongoing]",
     year: "2026",
     role: "Master's Courses",
     description:
