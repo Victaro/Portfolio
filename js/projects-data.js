@@ -54,7 +54,7 @@
 const PROJECTS = [
   {
     title: "Digital Design Sketching",
-    year: "2025",
+    year: "2026",
     role: "Pre-Master IDE",
     description:
       "This course taught me how to do design sketching digitally, using its ideation strengths over traditional sketching.",
