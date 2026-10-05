@@ -34,16 +34,11 @@
 
 		
 		Bachelor:
-			- Sounds and Circuits (2021/2022?)
-			- Human Centered Design (HCD)
 			- Smart tech (circuits & electronics), (modelling & control), (hackathon)
-			- Design an research of user experience (3 tests)
 			- data driven applications (sql)
 		
 		Master:
-			- Virtual Reality
 			- Design and behaviour change
-			- soft robotics
 			
 			-* design production and materials (not finished)
 			- packaging 1 + 2
@@ -370,19 +365,36 @@ const PROJECTS = [
     images: [],
     tags: ["Design", "Manufacturing", "UX"],
     links: [],
-    featured: true,
+    featured: false,
   },
   {
-    title: "Soft Robotics",
+    title: "Soft Robotics Sign Language Glove",
     year: "2026",
     role: "Master's Course",
     description:
       "Soft robotics are a new approach in designing safe and adaptive interactions.",
     body: ["Soft robotics are a new approach in designing safe and adaptive interactions.",
-	"For the final project, our group created a glove to help learn sign language using mostly soft materials, with the intention to make the user be able to wear it throughout the day without being disturbed from other work. The result was tested using rock, paper scissors and worked surprisingly well. A video of the project can be found above."],
+	"For the final project of the course, our group created a glove to help learn sign language using mostly soft materials, with the intention to make the user be able to wear it throughout the day without being disturbed from other work.",
+	"The result was tested using rock, paper scissors and worked surprisingly well. A video of the project can be found above."],
     images: ["assets/meg.mp4"],
     tags: ["Design", "Programming"],
     links: [],
-    featured: true,
+    featured: false,
+  },
+  {
+    title: "Digital Twinning and Virtual Reality",
+    year: "2025",
+    role: "Master's Course",
+    description:
+      "A course on Virtual Reality lead our group to create a digital twin for a paper company that has issues transferring audio-based knowledge.",
+    body: ["A course on Virtual Reality lead our group to create a digital twin for a paper company that has issues transferring audio-based knowledge.",
+	"By mapping images to Gaussian splats, a digital twin of the factory line was created. The prototype was further developed in Unity, where the idea was to map changes in real-time audio to the twin.",
+	"A maintenance worker can identify the issue and log it in the environment, where the audio log is stored and processed.",
+	"When a similar soundscape is detected, the system can provide a provide the log of the previous repair. This way, audio-based knowledge can be transferred to new and future maintenance workers.",
+	"I cannot share more regarding the company or further details of the project."],
+    images: [],
+    tags: ["Programming", "UX", "CAD"],
+    links: [],
+    featured: false,
   },
 ];
