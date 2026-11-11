@@ -1,20 +1,22 @@
 /* ---------------------------------------------------------------
    RENDER LOGIC
-   You shouldn't need to edit this file. It reads the PROJECTS list
-   from projects-data.js, builds the HTML for the home page and the
-   projects page, and wires up the click-to-expand detail dialog.
+   Reads the PROJECTS list from projects-data.js, builds the HTML
+   for the home page and the projects page, and wires up the
+   click-to-expand detail dialog and the image lightbox.
+   Requires i18n.js (for t() and L()) to be loaded first.
 ----------------------------------------------------------------*/
 
 function escapeHTML(str) {
   const div = document.createElement("div");
-  div.textContent = str;
+  div.textContent = str == null ? "" : str;
   return div.innerHTML;
 }
 
 function renderTagList(tags) {
-  if (!tags || tags.length === 0) return "";
-  return `<ul class="tags">${tags
-    .map((t) => `<li class="tag">${escapeHTML(t)}</li>`)
+  const list = L(tags);
+  if (!list || list.length === 0) return "";
+  return `<ul class="tags">${list
+    .map((tag) => `<li class="tag">${escapeHTML(tag)}</li>`)
     .join("")}</ul>`;
 }
 
@@ -22,7 +24,26 @@ function sortByYearDesc(list) {
   return [...list].sort((a, b) => String(b.year).localeCompare(String(a.year)));
 }
 
-/* ---------------- Home page: featured cards ---------------- */
+function projectRowHTML(p, realIndex) {
+  const role = L(p.role);
+  return `
+    <button
+      class="project-row"
+      type="button"
+      data-project-index="${realIndex}"
+      data-tags="${escapeHTML((L(p.tags) || []).join("|").toLowerCase())}"
+    >
+      <span class="year">${escapeHTML(p.year)}</span>
+      <span>
+        <h3>${escapeHTML(L(p.title))}</h3>
+        ${role ? `<span class="role">${escapeHTML(role)}</span>` : ""}
+        <p>${escapeHTML(L(p.description))}</p>
+        ${renderTagList(p.tags)}
+      </span>
+    </button>`;
+}
+
+/* ---------------- Home page: featured projects ---------------- */
 
 function renderFeatured() {
   const container = document.getElementById("featured-grid");
@@ -31,24 +52,12 @@ function renderFeatured() {
   const featured = sortByYearDesc(PROJECTS.filter((p) => p.featured));
 
   if (featured.length === 0) {
-    container.innerHTML = `<p class="empty-state">Mark a project as <code>featured: true</code> in projects-data.js to show it here.</p>`;
+    container.innerHTML = `<p class="empty-state">${t("featured.empty")}</p>`;
     return;
   }
 
-    container.innerHTML = featured
-    .map((p) => {
-      const realIndex = PROJECTS.indexOf(p);
-      return `
-      <button class="project-row" type="button" data-project-index="${realIndex}">
-        <span class="year">${escapeHTML(p.year)}</span>
-        <span>
-          <h3>${escapeHTML(p.title)}</h3>
-          ${p.role ? `<span class="role">${escapeHTML(p.role)}</span>` : ""}
-          <p>${escapeHTML(p.description)}</p>
-          ${renderTagList(p.tags)}
-        </span>
-      </button>`;
-    })
+  container.innerHTML = featured
+    .map((p) => projectRowHTML(p, PROJECTS.indexOf(p)))
     .join("");
 }
 
@@ -61,25 +70,11 @@ function renderProjectsPage() {
   const sorted = sortByYearDesc(PROJECTS);
 
   list.innerHTML = sorted
-    .map((p) => {
-      const realIndex = PROJECTS.indexOf(p);
-      return `
-      <button
-        class="project-row"
-        type="button"
-        data-project-index="${realIndex}"
-        data-tags="${escapeHTML((p.tags || []).join("|").toLowerCase())}"
-      >
-        <span class="year">${escapeHTML(p.year)}</span>
-        <span>
-          <h3>${escapeHTML(p.title)}</h3>
-          ${p.role ? `<span class="role">${escapeHTML(p.role)}</span>` : ""}
-          <p>${escapeHTML(p.description)}</p>
-          ${renderTagList(p.tags)}
-        </span>
-      </button>`;
-    })
+    .map((p) => projectRowHTML(p, PROJECTS.indexOf(p)))
     .join("");
+
+  const empty = document.getElementById("empty-state");
+  if (empty) empty.style.display = "none";
 
   renderFilterBar(sorted);
 }
@@ -88,13 +83,15 @@ function renderFilterBar(projects) {
   const bar = document.getElementById("filter-bar");
   if (!bar) return;
 
+  // Count how many projects use each tag (in the current language)
   const tagCounts = {};
   projects.forEach((p) => {
-    (p.tags || []).forEach((t) => {
-      tagCounts[t] = (tagCounts[t] || 0) + 1;
+    (L(p.tags) || []).forEach((tag) => {
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
     });
   });
 
+  // Most-used first, ties alphabetical
   const allTags = Object.keys(tagCounts).sort(
     (a, b) => tagCounts[b] - tagCounts[a] || a.localeCompare(b)
   );
@@ -105,7 +102,9 @@ function renderFilterBar(projects) {
   }
 
   bar.innerHTML =
-    `<button class="filter-chip" type="button" data-tag="all" aria-pressed="true">All</button>` +
+    `<button class="filter-chip" type="button" data-tag="all" aria-pressed="true">${escapeHTML(
+      t("filter.all")
+    )}</button>` +
     allTags
       .map(
         (tag) =>
@@ -115,7 +114,8 @@ function renderFilterBar(projects) {
       )
       .join("");
 
-  bar.addEventListener("click", (e) => {
+  // onclick (not addEventListener) so re-rendering never stacks listeners
+  bar.onclick = (e) => {
     const btn = e.target.closest(".filter-chip");
     if (!btn) return;
 
@@ -125,7 +125,7 @@ function renderFilterBar(projects) {
     btn.setAttribute("aria-pressed", "true");
 
     const tag = btn.dataset.tag;
-    const rows = document.querySelectorAll(".project-row");
+    const rows = document.querySelectorAll("#project-list .project-row");
     let visibleCount = 0;
 
     rows.forEach((row) => {
@@ -137,7 +137,7 @@ function renderFilterBar(projects) {
 
     const empty = document.getElementById("empty-state");
     if (empty) empty.style.display = visibleCount === 0 ? "block" : "none";
-  });
+  };
 }
 
 /* ---------------- Project detail dialog ---------------- */
@@ -160,31 +160,35 @@ function setupProjectDialog() {
   function openProject(project, trigger) {
     lastTrigger = trigger || null;
 
-    titleEl.textContent = project.title;
-    metaEl.textContent = [project.year].filter(Boolean).join(" · ");
-    roleEl.textContent = project.role || "";
-    roleEl.style.display = project.role ? "block" : "none";
+    const title = L(project.title);
+    const role = L(project.role);
 
+    titleEl.textContent = title;
+    metaEl.textContent = [project.year].filter(Boolean).join(" · ");
+    roleEl.textContent = role || "";
+    roleEl.style.display = role ? "block" : "none";
+
+    const bodyList = L(project.body);
     const paragraphs =
-      project.body && project.body.length > 0
-        ? project.body
-        : [project.description];
+      bodyList && bodyList.length > 0 ? bodyList : [L(project.description)];
     bodyEl.innerHTML = paragraphs
       .map((para) => `<p>${escapeHTML(para)}</p>`)
       .join("");
 
-	if (project.images && project.images.length > 0) {
+    if (project.images && project.images.length > 0) {
       galleryEl.innerHTML = `<div class="dialog-gallery">${project.images
         .map((src) => {
           const isVideo = /\.(mp4|webm|mov)$/i.test(src);
           if (isVideo) {
             return `<video src="${escapeHTML(src)}" controls playsinline></video>`;
           }
-          return `<button class="zoomable" type="button" aria-label="Enlarge image">
-               <img src="${escapeHTML(src)}" alt="${escapeHTML(
-                 project.title
-               )} screenshot" loading="lazy" />
-             </button>`;
+          return `<button class="zoomable" type="button" aria-label="${escapeHTML(
+            t("aria.enlarge")
+          )}">
+              <img src="${escapeHTML(src)}" alt="${escapeHTML(
+            title
+          )}" loading="lazy" />
+            </button>`;
         })
         .join("")}</div>`;
     } else {
@@ -197,8 +201,10 @@ function setupProjectDialog() {
     linksEl.innerHTML = links
       .map(
         (l) =>
-          `<a class="btn" href="${escapeHTML(l.url)}" target="_blank" rel="noopener">${escapeHTML(
-            l.label || "View project"
+          `<a class="btn" href="${escapeHTML(
+            l.url
+          )}" target="_blank" rel="noopener">${escapeHTML(
+            L(l.label) || t("btn.viewProject")
           )}</a>`
       )
       .join("");
@@ -216,14 +222,14 @@ function setupProjectDialog() {
     if (lastTrigger) lastTrigger.focus();
   });
 
-  // Click on the backdrop (the dialog element itself, outside dialog-inner) closes it.
+  // Click on the backdrop (the dialog element itself) closes it.
   dialog.addEventListener("click", (e) => {
     if (e.target === dialog) closeProject();
   });
 
   closeBtn.addEventListener("click", closeProject);
 
-  // Delegate clicks from any project trigger button on the page.
+  // Delegate clicks from any project row on the page.
   document.addEventListener("click", (e) => {
     const trigger = e.target.closest("[data-project-index]");
     if (!trigger) return;
@@ -232,7 +238,7 @@ function setupProjectDialog() {
   });
 }
 
-	// zoomable image
+/* ---------------- Zoomable image lightbox ---------------- */
 
 function setupLightbox() {
   const lightbox = document.getElementById("lightbox");
@@ -258,11 +264,18 @@ function setupLightbox() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/* ---------------- Start-up ---------------- */
+
+function renderAll() {
   renderFeatured();
   renderProjectsPage();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderAll();
   setupProjectDialog();
   setupLightbox();
 });
 
-
+// Fired by i18n.js when the visitor switches language
+document.addEventListener("langchanged", renderAll);
