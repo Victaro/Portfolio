@@ -718,6 +718,15 @@ section.featured {
   }
 }
 
+header.site-header .wrap {
+    align-items: center;   
+    gap: 0.75rem;
+  }
+
+  nav.site-nav a {
+    font-size: 0.9rem;
+  }
+
 .lang-switch {
   display: flex;
   align-items: baseline;
