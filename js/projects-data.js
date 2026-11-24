@@ -98,7 +98,7 @@ const PROJECTS = [
     images: ["assets/ChessPieces.jpg", "assets/gameboy.jpg"],
     tags: { en: ["Design"], nl: ["Ontwerp"] },
     links: [],
-    featured: true,
+    featured: false,
   },
   {
     title: {en: "Programming in C++", nl: "Programmeren in C++"},
